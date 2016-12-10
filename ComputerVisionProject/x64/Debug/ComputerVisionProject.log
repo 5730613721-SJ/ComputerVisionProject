@@ -3,6 +3,6 @@ c:\opencv\build\include\opencv2\core\mat.hpp(1965): warning C4819: The file cont
 c:\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (932). Save the file in Unicode format to prevent data loss
 c:\opencv\build\include\opencv2\core\utility.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (932). Save the file in Unicode format to prevent data loss
 c:\opencv\build\include\opencv2\core\utility.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (932). Save the file in Unicode format to prevent data loss
-c:\users\magic\documents\visual studio 2015\projects\computervisionproject\computervisionproject\source.cpp(54): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  ComputerVisionProject.vcxproj -> C:\Users\Magic\Documents\Visual Studio 2015\Projects\ComputerVisionProject\x64\Debug\ComputerVisionProject.exe
-  ComputerVisionProject.vcxproj -> C:\Users\Magic\Documents\Visual Studio 2015\Projects\ComputerVisionProject\x64\Debug\ComputerVisionProject.pdb (Full PDB)
+d:\cv\computervisionproject\computervisionproject\source.cpp(55): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  ComputerVisionProject.vcxproj -> D:\CV\ComputerVisionProject\x64\Debug\ComputerVisionProject.exe
+  ComputerVisionProject.vcxproj -> D:\CV\ComputerVisionProject\x64\Debug\ComputerVisionProject.pdb (Full PDB)

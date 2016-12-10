@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include "opencv2/opencv.hpp"
+#include <string>
 #define endl '\n'
 #define THRESHOLD 150
 using namespace std;
@@ -61,7 +62,7 @@ int NoHead(vector<Point> contr)
 	Mat temp = inputImage(boundRect);
 	cvtColor(temp, temp, CV_BGR2GRAY);
 	int check = 0; // 0 is ก , 1 is ธ
-	imshow("temp", temp);
+	//imshow("temp", temp);
 
 	for (int i = temp.rows - 1; i >= temp.rows / 2; i--)
 	{
@@ -71,10 +72,10 @@ int NoHead(vector<Point> contr)
 			break;
 		}
 	}
-	if (check)
+	/*if (check)
 		putText(inputImage, "1", Point(boundRect.x, boundRect.y), 1, 2, Scalar(0, 0, 0), 2);
 	else
-		putText(inputImage, "0", Point(boundRect.x, boundRect.y), 1, 2, Scalar(0, 0, 0), 2);
+		putText(inputImage, "0", Point(boundRect.x, boundRect.y), 1, 2, Scalar(0, 0, 0), 2);*/
 	return check;
 }
 
@@ -152,6 +153,196 @@ int longTail(vector<Point> contr)
 	return check; // 0 : ป, 1 : ฟ, 2 : ฝ
 }
 
+int roughHead(vector<Point> contr) {
+	Rect boundRect = boundingRect(contr);
+
+	Mat temp = inputImage(boundRect);
+	cvtColor(temp, temp, CV_BGR2GRAY);
+	int check = -1; //-1 is not this type : 0 is ฃ,1 is ซ, 2 is ท
+	bool black = true;
+	int countHead = 0;
+	int countMiddle = 0;
+	int countLow = 0;
+
+	//Find specific type
+	for (int i = 0; i <= temp.cols / 3; i++)
+	{
+		if (temp.at<uchar>((int)(temp.rows*0.15), i) > THRESHOLD && !black)
+		{
+			black = true;
+		}
+		else if (temp.at<uchar>((int)(temp.rows*0.15), i) < THRESHOLD && black)
+		{
+			black = false;
+			countHead++;
+		}
+	}
+
+	black = true;
+	for (int i = 0; i <= (int)(temp.cols*0.3); i++)
+	{
+		if (temp.at<uchar>((int)(temp.rows*0.6), i) > THRESHOLD && !black)
+		{
+			black = true;
+		}
+		else if (temp.at<uchar>((int)(temp.rows*0.6), i) < THRESHOLD && black)
+		{
+			black = false;
+			countMiddle++;
+		}
+	}
+
+	black = true;
+	for (int i = 0; i <= (int)(temp.cols - 1); i++)
+	{
+		if (temp.at<uchar>((int)(temp.rows*0.8), i) > THRESHOLD && !black)
+		{
+			black = true;
+		}
+		else if (temp.at<uchar>((int)(temp.rows*0.8), i) < THRESHOLD && black)
+		{
+			black = false;
+			countLow++;
+		}
+	}
+
+	//Specified
+	if (countHead == 2 && countLow == 2)
+	{
+		if (countMiddle == 1) {
+			black = true;
+			int tbTest = 0;
+			for (int i = 0; i <= (int)(temp.cols / 2); i++)
+			{
+				if (temp.at<uchar>((int)(temp.rows*0.5), i) > THRESHOLD && !black)
+				{
+					black = true;
+				}
+				else if (temp.at<uchar>((int)(temp.rows*0.8), i) < THRESHOLD && black)
+				{
+					black = false;
+					tbTest++;
+				}
+			}
+			if (tbTest == 2)
+				check = 2;
+
+		}
+		else {
+			int ccTest = 0;
+			if (temp.at<uchar>((int)(temp.rows*0.22), (int)(temp.cols*0.98)) < THRESHOLD)
+				ccTest++;
+
+			if (ccTest == 1) {
+				check = 0;
+			}
+			else
+				check = 1;
+
+		}
+		putText(inputImage, to_string(check), Point(boundRect.x, boundRect.y), 1, 2, Scalar(0, 255, 255), 2);
+	}
+	return check;
+} //-1 is not this type : 0 is ฃ,1 is ซ, 2 is ท
+
+int midRound(vector<Point> contr) {
+	Rect boundRect = boundingRect(contr);
+
+	Mat temp = inputImage(boundRect);
+	cvtColor(temp, temp, CV_BGR2GRAY);
+	int check = -1; //-1 is not this type : 0 is ข,1 is ช, 2 is ค, 3 is ต, 4 is ด, 5 is ต, 6 is ญ
+	bool black = true;
+	int countMidHead = 0;
+	int countHead = 0;
+	int countLow = 0;
+
+	//Find specific type
+	for (int i = (int)(temp.cols*0.0); i <= (int)(temp.cols - 1); i++)
+	{
+		if (temp.at<uchar>((int)(temp.rows*0.00), i) > THRESHOLD && !black)
+		{
+			black = true;
+		}
+		else if (temp.at<uchar>((int)(temp.rows*0.00), i) < THRESHOLD && black)
+		{
+			black = false;
+			countHead++;
+		}
+	}
+	//putText(inputImage, to_string(countHead), Point(boundRect.x, boundRect.y), 1, 2, Scalar(0, 0, 255), 2);
+
+	black = true;
+	for (int i = (int)(temp.cols*0.3); i <= (int)(temp.cols*0.7); i++)
+	{
+		if (temp.at<uchar>((int)(temp.rows*0.45), i) > THRESHOLD && !black)
+		{
+			black = true;
+		}
+		else if (temp.at<uchar>((int)(temp.rows*0.45), i) < THRESHOLD && black)
+		{
+			black = false;
+			countMidHead++;
+		}
+	}
+
+	//putText(inputImage, to_string(countMidHead), Point(boundRect.x, boundRect.y), 1, 2, Scalar(0, 0, 255), 2);
+
+	black = true;
+	for (int i = (int)(temp.cols*0.0); i <= (int)(temp.cols*0.7); i++)
+	{
+		if (temp.at<uchar>((int)(temp.rows*0.75), i) > THRESHOLD && !black)
+		{
+			black = true;
+		}
+		else if (temp.at<uchar>((int)(temp.rows*0.75), i) < THRESHOLD && black)
+		{
+			black = false;
+			countLow++;
+		}
+	}
+
+	//putText(inputImage, to_string(countLow), Point(boundRect.x, boundRect.y), 1, 2, Scalar(0, 0, 255), 2);
+
+	if (countMidHead == 1) {
+		if (countHead == 1) {
+			if (countLow == 3) {
+				check = 6; //ญ
+			}
+			else {
+				int ccTest = 0;
+				if (temp.at<uchar>((int)(temp.rows*0.22), (int)(temp.cols*0.98)) < THRESHOLD)
+					ccTest++;
+
+				if (ccTest == 1) {
+					check = 0; //ข
+				}
+				else
+					check = 1; //ฃ
+			}
+
+			//putText(inputImage, to_string(check), Point(boundRect.x, boundRect.y), 1, 2, Scalar(0, 0, 255), 2);
+		}
+	}
+	else if (countMidHead == 2) {
+		if (countLow == 1) {
+			if (countHead == 1)
+				check = 2; //ค
+			else
+				check = 3; //ต
+		}
+		else {
+			if (countHead == 1)
+				check = 4; //ด
+			else
+				check = 5; //ต
+		}
+	}
+
+	if (check != -1)
+		putText(inputImage, to_string(check), Point(boundRect.x, boundRect.y), 1, 2, Scalar(0, 0, 255), 2);
+	return check;
+} //0 is ข, 1 is ช, 2 is ค, 3 is ต, 4 is ด, 5 is ต, 6 is ญ
+
 int OneHead(vector<Point> contr)
 {
 	//rectangle(inputImage,boundingRect(contr[i]),Scalar(0,0,255),1,LINE_8,0);
@@ -165,6 +356,20 @@ int OneHead(vector<Point> contr)
 	if ((check = longTail(contr) != -1))
 	{
 
+	}
+
+	else if ((check = roughHead(contr) != -1))
+	{
+
+	}
+
+	else if ((check = midRound(contr) != -1))
+	{
+
+	}
+
+	else {
+		rectangle(inputImage, boundRect, Scalar(0, 0, 0), 1, LINE_8, 0);
 	}
 	//switch (up)
 	//{
@@ -219,7 +424,7 @@ void findOverAllHole()
 			NoHead(contr[i]);
 			break;
 		case 1:
-			//OneHead(contr[i]);
+			OneHead(contr[i]);
 			break;
 		case 2:
 			TwoHead(contr[i]);
@@ -239,7 +444,7 @@ int main()
 	//More accuary for big cbaracter
 	//resize(input, input, Size(input.cols * 10, input.rows * 10), 0, 0, INTER_LINEAR);
 
-	inputImage = imread("Untitled.png");
+	inputImage = imread("Untitledx.png");
 	threshold(inputImage, inputImage, THRESHOLD, 255, THRESH_BINARY);
 
 	findOverAllHole();
